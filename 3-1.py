@@ -9,7 +9,7 @@ def numFind(n):
     output = 0
     with open("3.txt") as f:
         f = f.read()
-    f = [r for r in f.split("\n")]
+    f = [s for s in f.split("\n")]
     for i in f:
         a = set(i[:len(i) // 2])
         b = set(i[len(i) // 2:])
