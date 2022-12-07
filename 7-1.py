@@ -9,13 +9,11 @@ def numFind(n):
     tree = {}
     pwd = ""
     o = 0
+    output = 0
     with open("7.txt") as f:
         f = f.read()
     f = [s.split(" ") for s in f.split("\n")]
-    print(f)
-    #for o in f:
     while o < len(f):
-        #print(f[o])
         #Start command checking
         if f[o][0] == "$":
             if f[o][1] == "cd":
@@ -33,7 +31,6 @@ def numFind(n):
             elif f[o][1] == "ls":
                 o += 1
                 while True:
-                    #print("o: ", o)
                     if f[o][0] == "$":
                         break
                     else:
@@ -44,27 +41,28 @@ def numFind(n):
         else:
             o += 1
         
-        
-        #print("Tree: ", tree)
-        #print("pwd: ", pwd)
-    for k in tree:
-        print(k)
-        for t in tree[k]:
-            print("  ", t)
+    #print tree w/structure
+    #for k in tree:
+    #    print(k)
+    #    for t in tree[k]:
+    #        print("  ", t)
+    #######################
     
-    
-    print("end")
+
+    #need to break this out to callable function for recursion
+    output = 0
     for a in tree:
+        print("Checking {}".format(a))
         dirSizeTotal = 0
-        for b in tree[a][0]:
-            print(tree[a], "b: ", b)
-            try:
-                dirSizeTotal += int(b)
-            except:
+        for b in tree[a]:
+            if b[0].isnumeric():
+                dirSizeTotal += int(b[0])
+            elif b[0] == "dir":
+                print("***Call recursion on {}{}/".format(a, b[1]))
                 pass
-        print(a, dirSizeTotal)
-    
-    return None
+        if dirSizeTotal <= 100000:
+            output += dirSizeTotal
+    return output
 
 
 if __name__ == '__main__':
