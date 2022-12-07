@@ -69,10 +69,6 @@ def numFind(n):
     return output
 
 
-
-
-
-
 if __name__ == '__main__':
     startTime = timeit.default_timer()
     print(">>>>>", time.asctime(), "<<<<<\n")
