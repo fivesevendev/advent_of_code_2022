@@ -51,6 +51,19 @@ def numFind(n):
         print(k)
         for t in tree[k]:
             print("  ", t)
+    
+    
+    print("end")
+    for a in tree:
+        dirSizeTotal = 0
+        for b in tree[a][0]:
+            print(tree[a], "b: ", b)
+            try:
+                dirSizeTotal += int(b)
+            except:
+                pass
+        print(a, dirSizeTotal)
+    
     return None
 
 
