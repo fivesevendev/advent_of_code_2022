@@ -18,13 +18,18 @@ def numFind(n):
         if f[o][0] == "$":
             if f[o][1] == "cd":
                 if f[o][2] == "..":
+                    #removes one dir level depth
                     pwd = pwd[:pwd[:-1].rfind("/") + 1]
                     if pwd == "":
                         pwd = "/"
                 else:
+                    #creates new absolute path of nested directory
                     pwd = pwd + f[o][2] + "/"
+                    #pass
+                #prevents double root path
                 if pwd[:2] == "//":
                     pwd = pwd[1:]
+                #add absolute path to tree dict
                 if pwd not in tree:
                     tree[pwd] = []
                 o += 1
@@ -35,34 +40,37 @@ def numFind(n):
                         break
                     else:
                         tree[pwd].append((f[o][0], f[o][1]))
+                        allParents = pwd
+                        #this loop appends folder values to all parent dirs
+                        while len(allParents) > 1:
+                            allParents  = allParents[:allParents[:-1].rfind("/") + 1]
+                            tree[allParents].append((f[o][0], f[o][1]))
+                        ###################################################
                         o += 1
                         if o > len(f) - 1:
                             break
-        else:
-            o += 1
-        
+       
     #print tree w/structure
     #for k in tree:
     #    print(k)
     #    for t in tree[k]:
     #        print("  ", t)
-    #######################
-    
+    #######################    
 
-    #need to break this out to callable function for recursion
-    output = 0
     for a in tree:
-        print("Checking {}".format(a))
         dirSizeTotal = 0
         for b in tree[a]:
             if b[0].isnumeric():
                 dirSizeTotal += int(b[0])
             elif b[0] == "dir":
-                print("***Call recursion on {}{}/".format(a, b[1]))
                 pass
         if dirSizeTotal <= 100000:
             output += dirSizeTotal
     return output
+
+
+
+
 
 
 if __name__ == '__main__':
