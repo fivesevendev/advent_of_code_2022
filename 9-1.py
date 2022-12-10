@@ -6,7 +6,6 @@ import time
 
 
 def numFind(n):
-    #global tTrail
     tTrail = {}
     hPos = [1, 1]
     tPos = [1, 1]
