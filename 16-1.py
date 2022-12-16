@@ -7,6 +7,7 @@ import time
 
 def numFind():
     valves = {}
+    seconds = 30
     with open("16.txt") as f:
         f = f.read()
     f = [s for s in f.split("\n")]
@@ -19,12 +20,13 @@ def numFind():
     
     for vf in f:
         v = vf.split(",")
-        valves[v[0]] = {"flow": int(v[1]), "leads": v[2:], "open": False}
+        valves[v[0]] = {"flow": int(v[1]), "leads": v[2:], "open": False} #builds the valves dict with attributes
     
-    for v in valves:
-        #print(v)
-        print(valves[v]["flow"])
+    while seconds > 0:
+        break
 
+    return "*****WIP*****"
+    
 
 if __name__ == '__main__':
     startTime = timeit.default_timer()
