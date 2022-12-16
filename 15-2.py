@@ -32,24 +32,22 @@ def numFind(mx):
             r = ff[1] - (mD - width)
             for c in range(ff[0] - width, ff[0] + width + 1): #starts top peak of diamond going thru base
                 if c > mx or c < 0 or r > mx or r < 0: #checks if its too big or too small for area of concern
-                    pass
-                else:
-                    grid[(r, c)] = None
+                    continue
+                grid[(r, c)] = None
             width += 1
         width -= 2
         while width >= 0:
             r = ff[1] + (mD - width)
             for c in range(ff[0] - width, ff[0] + width + 1): #starts line under base thru bottom peak
                 if c > mx or c < 0 or r > mx or r < 0: #checks if its too big or too small for area of concern
-                    pass
-                else:
-                    grid[(r, c)] = None
+                    continue
+                grid[(r, c)] = None
             width -= 1
         progress += 1
     #print(sorted([g for g in grid if 0 <= g[0] <= mx and 0 <= g[1] <= mx]))
     print("Starting To Look For Missing")
     #return missing(mx)
-    return "*****WIP*****"
+    #return "*****WIP*****"
 
 
 def manhat(a, b):
