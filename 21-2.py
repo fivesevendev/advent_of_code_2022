@@ -4,12 +4,11 @@
 import timeit
 import time
 from collections import deque
-###################################### Test should be 19
+
 
 def numFind():
-    humn = 0
+    humn = 3272260914300 #a lot of manual testing went into finding this starting point
     while True:
-        #with open("21-2-test.txt") as f:
         with open("21-2.txt") as f:
             f = f.read()
         f = [[ss for ss in s.split(": ")] for s in f.splitlines()]
@@ -37,8 +36,7 @@ def numFind():
             else:
                 we_do_math.append(mather) #if not all values known, add back to end of the list to do again later
         if known['tcmj'] == known['qggp']:
-        #if known['tree'] == known['chip']:
-                return known['humn']
+            return known['humn']
         humn += 1
 
 
