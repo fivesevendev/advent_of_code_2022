@@ -49,11 +49,8 @@ def numFind(n):
                             moved_elves[m_f] = m_t
                             break
                 else:
-                    #no movement at all possible:
-                    #print("can't move", m_f)
-                    moved_elves[m_f] = m_f
+                    moved_elves[m_f] = m_f #no movement at all possible
             else:
-                #print("no move:", m_f)
                 new_elves.append(m_f) #adds unmoved tuple to new_elves list
 
         for x, y in moved_elves.items():
