@@ -4,12 +4,11 @@
 import timeit
 import time
 from copy import deepcopy
-import sys
+
 
 sKey = {"2": 2, "1":1, "0":0, "-":-1, "=":-2}
 fives = [1, 5, 25, 125, 625, 3125, 15625, 78125, 390625, 1953125, 9765625, 48828125, 244140625, 1220703125, 6103515625, 30517578125, 152587890625, 762939453125, 3814697265625, 19073486328125, 95367431640625, 476837158203125, 2384185791015625, 11920928955078125, 59604644775390625]
 
-decimal_answer = 30223327868980
 
 def numFind():
     with open("25.txt") as f:
@@ -18,65 +17,50 @@ def numFind():
     total = 0
     for ef in f:
         total += unSnafu(ef)
-    #return total
-    #print(total)
-    #return snafu(total)
-    print(snafu(1747))
+    return snafu(total)
+
+def snafu(sN):
+    position = 0
+    current_num = 0
+    target = int(sN)
+    build_point = 0
+    for five in range(len(fives)):
+        build_point += fives[five] * 2
+        if build_point >= sN:
+            working_range = deepcopy(fives[:five + 1][::-1])
+            output = list("0" * (five + 1))
+            break
+    for slot in working_range:
+        closest = 10**1000
+        pTwo = (current_num + (slot * 2)) - target
+        pOne = (current_num + (slot * 1)) - target
+        zZero = (current_num + 0) - target
+        nOne = (current_num + (slot * -1)) - target
+        nTwo = (current_num + (slot * -2)) - target
+        if abs(pTwo) < closest: closest = pTwo
+        if abs(pOne) < closest: closest = pOne
+        if abs(zZero) < closest: closest = zZero
+        if abs(nOne) < closest: closest = nOne
+        if abs(nTwo) < closest: closest = nTwo
+        if pTwo == closest:
+            output[position] = "2"
+        elif pOne == closest:
+            output[position] = "1"
+        elif zZero == closest:
+            output[position] = "0"
+        elif nOne == closest:
+            output[position] = "-"
+        elif nTwo == closest:
+            output[position] = "="
+        position += 1
+        current_num = unSnafu(output)
+    return "".join(output)
 
 def unSnafu(u_sN):
     output = 0
     for u, v in list(enumerate(u_sN[::-1])):
         output += ((5 ** u) * sKey[v]) #turns snafu number into decimal number
     return output
-
-
-def snafu(sN):
-    target = int(sN)
-    current_num = 0
-    position = 0
-    for five in range(len(fives)):
-        if ((fives[five] * 2) % sN) < (fives[five] // 2):
-            #print(fives[five])
-            #sys.exit()
-            #fiv = deepcopy(fives[five])
-            working_range = deepcopy(fives[:five + 1])[::-1] #use working range to pick values for slots
-            #fiv = deepcopy(fives[five - 1]) #picks value below the too big value of power of 5
-            #if sN / fiv > 2:
-            #    fiv = deepcopy(fives[fives.index(fiv) + 1]) #if it requires more than 2 of this value it much require a larger value power of 5
-            #    five += 1 #adjust the fives mult value position
-            print("building")
-            output = list(str("0" * (five)))
-            output[position] = fives[five] // sN
-            sN = fives[five] % sN
-            position += 1
-            break    
-    #print("five:", five)
-    #print("working_range:", working_range)
-    
-
-    for slot in working_range:
-        if slot > target:
-            print("slot > target")
-            if current_num > sN:
-                if slot // sN == 2:
-                    output[position] = "="
-                elif slot // sN == 1:
-                    output[position] = "-"
-                else:
-                    print("size:", slot // sN)
-            else:
-                print("else")
-                output[position] = str(slot // sN)
-        sN = sN % slot
-        print("target:", target, "sN:", sN, "current:", current_num, "slot:", slot, "output", output)
-
-        position += 1
-        current_num = unSnafu(output)
-        
-        
-        time.sleep(5)
-
-
 
 
 if __name__ == '__main__':
