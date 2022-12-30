@@ -4,6 +4,7 @@
 import timeit
 import time
 from copy import deepcopy
+import sys
 
 sKey = {"2": 2, "1":1, "0":0, "-":-1, "=":-2}
 fives = [1, 5, 25, 125, 625, 3125, 15625, 78125, 390625, 1953125, 9765625, 48828125, 244140625, 1220703125, 6103515625, 30517578125, 152587890625, 762939453125, 3814697265625, 19073486328125, 95367431640625, 476837158203125, 2384185791015625, 11920928955078125, 59604644775390625]
@@ -33,46 +34,50 @@ def snafu(sN):
     target = int(sN)
     current_num = 0
     position = 0
-    built = False
-    while sN > 0:
-        for five in range(len(fives)):
-            if fives[five] > sN:
-                fiv = deepcopy(fives[five - 1]) #picks value below the too big value of power of 5
-                #print("sN:", sN, "fiv:", fiv)
-                break
-        
-        if sN / fiv > 2:
-            fiv = deepcopy(fives[fives.index(fiv) + 1]) #if it requires more than 2 of this value it much require a larger value power of 5
-            five += 1 #adjust the fives mult value position
-        
-        if not built:
+    for five in range(len(fives)):
+        if ((fives[five] * 2) % sN) < (fives[five] // 2):
+            #print(fives[five])
+            #sys.exit()
+            #fiv = deepcopy(fives[five])
+            working_range = deepcopy(fives[:five + 1])[::-1] #use working range to pick values for slots
+            #fiv = deepcopy(fives[five - 1]) #picks value below the too big value of power of 5
+            #if sN / fiv > 2:
+            #    fiv = deepcopy(fives[fives.index(fiv) + 1]) #if it requires more than 2 of this value it much require a larger value power of 5
+            #    five += 1 #adjust the fives mult value position
             print("building")
-            output = list(str(fiv // sN) + str("0" * (five - 1)))
-            built = True
-        else:
-            print("built")
-            if current_num > target:
-                #pass #build here for negatives
-                if fiv // sN == 2:
+            output = list(str("0" * (five)))
+            output[position] = fives[five] // sN
+            sN = fives[five] % sN
+            position += 1
+            break    
+    #print("five:", five)
+    #print("working_range:", working_range)
+    
+
+    for slot in working_range:
+        if slot > target:
+            print("slot > target")
+            if current_num > sN:
+                if slot // sN == 2:
                     output[position] = "="
-                elif fiv // sN == 1:
+                elif slot // sN == 1:
                     output[position] = "-"
                 else:
-                    output[position] = "0"
+                    print("size:", slot // sN)
             else:
-                output[position] = str(fiv // sN)
+                print("else")
+                output[position] = str(slot // sN)
+        sN = sN % slot
+        print("target:", target, "sN:", sN, "current:", current_num, "slot:", slot, "output", output)
+
         position += 1
         current_num = unSnafu(output)
-        print("target:", target, "sN:", sN, "current:", current_num, "output:", "fiv:", fiv, "output", output)
-        sN = fiv % sN
+        
         
         time.sleep(5)
 
-    print(output)
 
 
-def sBuilder():
-    pass
 
 if __name__ == '__main__':
     startTime = timeit.default_timer()
