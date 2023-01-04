@@ -59,13 +59,9 @@ def numFind():
     
     steps = 0
     backTrack = endPos #starts at the end position
-    while backTrack != startPos:
-        try:
-            backTrack = checked[backTrack][PARENT] #traces steps backwards to start pos
+    while checked[backTrack][PARENT] != None:
+            backTrack = checked[backTrack][PARENT] #traces steps backwards to a pos with "None" parent
             steps += 1
-        except KeyError:
-            steps -= 1 #subtracts one erroneously counted step
-            break
         
     return steps #returns min steps to reach start from end
 
