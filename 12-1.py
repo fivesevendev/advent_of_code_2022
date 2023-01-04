@@ -3,75 +3,74 @@
 
 import timeit
 import time
-from random import shuffle
 
 
 def numFind():
-    posValues = {}
-    blackList = {}
-    nextMove = 97
-    step = 0
-    
+    distance = 0
+    COST, HEIGHT, PARENT = 0, 1, 2 #index marking constants
+    ROW, COL = 0, 1 #index marking constants
+    BIGNUM = 1234567891011121314 #arbitrary large number for default cost
+    checked = {}
+    unchecked = {}
+
     with open("12.txt") as f:
         f = f.read()
     f = [list(s) for s in f.split("\n")]
+    
     for fr in range(len(f)):
         if "S" in f[fr]:
-            cPos, startPos = [fr, f[fr].index("S")], [fr, f[fr].index("S")] #determines and sets current and start positions
-        if "{" in f[fr]:
-            ePos = [fr, f[fr].index("{")] #determines and sets ending/target position
+            startPos = (fr, f[fr].index("S")) #determines and sets the start positions
+        if "E" in f[fr]:
+            endPos = (fr, f[fr].index("E")) #determines and sets ending position
         for fc in range(len(f[fr])):
-            posValues[fr, fc] = f[fr][fc]
+            unchecked[fr, fc] = [BIGNUM, ord(f[fr][fc]), None]
+    unchecked[startPos][COST] = 0 #sets start pos cost to 0
+    unchecked[startPos][HEIGHT] = 96 #sets starting height 1 less than ord("a")
+    unchecked[endPos][HEIGHT] = 123 #sets ending height 1 more than ord("z")
+
+    doneChecking = False
+    while not doneChecking:
+        if len(unchecked) == 0: #ends while loop if unchecked positions are depleted
+            doneChecking = True
+        else:
+            cPos = min(unchecked, key=unchecked.get) #selects the next position with the lowest cost
+            distance += 1
+            potentials = [(cPos[ROW] - 1, cPos[COL]), (cPos[ROW] + 1, cPos[COL]), (cPos[ROW], cPos[COL] - 1), (cPos[ROW], cPos[COL] + 1)] #creates list of 4 potential moves
+            for pot in potentials: #for all possible moves
+                if pot not in checked: #ensure we haven't checked them already
+                    if pot in unchecked: #ensure they exist within the grid provided
+                        if unchecked[pot][HEIGHT] <= unchecked[cPos][HEIGHT] + 1: #ensures move is at most 1 elev higher than current elev
+                            #cost = manhat(pot, endPos) #cost based only on manhat value
+                            #cost = manhat(pot, endPos) + distance #cost based on manhat value and distance already traveled
+                            cost = distance #cost based only on distance alread traveled
+                            if cost < unchecked[pot][COST]: #if cost(manhat distance) is less than BIGNUM
+                                unchecked[pot][COST] = cost #update COST of the pos
+                                unchecked[pot][PARENT] = cPos #update PARENT of the pos
+                                if pot == endPos:
+                                    break
+            checked[cPos] = unchecked[cPos] #adds cPos to the checked pos dict
+            del unchecked[cPos] #removes cPos from unchecked
+
+    #for chkd in checked.items():
+    #    print(chkd)
     
-    #print("Start: ", startPos)
-    pathTaken = {tuple(cPos): step}
-    while True:
-        checkList = [[cPos[0] - 1, cPos[1]], [cPos[0] + 1, cPos[1]], [cPos[0], cPos[1] - 1], [cPos[0], cPos[1] + 1]] #checks up, down, left, right
-        shuffle(checkList)
-        for checkCoord in checkList:
-            if tuple(checkCoord) in posValues: #checks that position is in the grid values
-                #print("Pos {} is {}:{} looking for {}:{}".format(checkCoord, ord(posValues[tuple(checkCoord)]), posValues[tuple(checkCoord)], nextMove, chr(nextMove)))
-                if ord(posValues[tuple(checkCoord)]) <= nextMove: #checks if value is less than or equal to the move we are looking for
-                    if tuple(checkCoord) not in pathTaken: #check we haven't been here before
-                        if tuple(checkCoord) not in blackList: #check we haven't been stuck here before                        
-                            step += 1
-                            pathTaken[tuple(checkCoord)] = step #add new step to the pathtaken
-                            cPos = list(checkCoord) #makes new step current step
-                            nextMove = ord(posValues[tuple(checkCoord)]) + 1
-                            #print("Step", step)
-                            #print("Current Position", cPos)
-                            #print("BROKEN")
-                            #time.sleep(1)
-                            break
-        else:                            
-            #print("Blacklisted")
-            blackList[tuple(cPos)] = 0
-            #print("Starting Over")
-            #print("Path Taken", pathTaken)
-            #print("Black List", blackList)
-            #print("")
-            nextMove = 97
-            step = 0
-            cPos = list(startPos)
-            pathTaken = {tuple(cPos): step}
-            #time.sleep(1)
+    steps = 0
+    backTrack = endPos #starts at the end position
+    while backTrack != startPos:
+        backTrack = checked[backTrack][PARENT] #traces steps backwards to start pos
+        steps += 1
+    return steps #returns min steps to reach start from end
 
-        if cPos == ePos:
-            #print(pathTaken)
-            #print([posValues[s] for s in pathTaken])
-            return len(pathTaken) - 1
 
-# 480 least so far
+def manhat(a, b):
+    aa = abs(a[0] - b[0])
+    bb = abs(a[1] - b[1])
+    return aa + bb
+
 
 if __name__ == '__main__':
     startTime = timeit.default_timer()
     print(">>>>>", time.asctime(), "<<<<<\n")
-    shortest = 1000
-    for _ in range(20):
-        test = numFind()
-        if test < shortest:
-            shortest = test
-    print("Result:", shortest)
-    print("*****WIP*****")
+    print("Result:", numFind())
     print("Run Time Was {:.4F} Seconds".format(timeit.default_timer() - startTime))
     print("\n>>>>>", time.asctime(), "<<<<<")
