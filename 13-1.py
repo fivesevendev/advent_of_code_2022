@@ -3,56 +3,43 @@
 
 import timeit
 import time
+from itertools import zip_longest
 
 
 def numFind():
-    correctOrder = []
+    correctOrderIndices = []
+    pairNum = 0
     with open("13.txt") as f:
         f = f.read()
-    f = [s for s in f.split("\n")]
-    pPairs = {}
-    count = 1
-    for x in f:
-        if x != "":
-            pPairs[count] = eval(x) #add number entries of list(s) to dict
-            count += 1
-    #print(pPairs)
-    for p in range(1, len(pPairs), 2):
-        print("Pair Index: ", (p + 1) // 2)
-        inOrder = True
-        l = pPairs[p]
-        r = pPairs[p + 1]
-        #print(l, "v", r)
-        print("l: {} v {} :r = {}".format(type(l), type(r), listComp(l, r)))
+    f = [[fs for fs in s.split("\n")] for s in f.split("\n\n")]
+    for fl, fr in f:
+        fl, fr = eval(fl), eval(fr)
+        pairNum += 1
+        if versus(fl, fr):
+            correctOrderIndices.append(pairNum) #adds pairNum to list of correct pairs
+    return sum(correctOrderIndices) #returns sum of correct pairNums
 
-    return "*****WIP*****"
-    return correctOrder
-    
-def intComp(l, r):
-    print(l, "<=", r, l <= r)
-    return l <= r
-
-def listComp(l, r):
-    if len(l) == len(r):
-        for ll, rr in zip(l, r):
-            #print(ll, type(ll), type(rr))
-            while type(ll) == list:
-                try:
-                    ll = ll[0]
-                except IndexError:
-                    return True
-            while type(rr) == list:
-                try:
-                    rr = rr[0]
-                except IndexError:
-                    return False
-            
-            if ll > rr:
+def versus(fl, fr):
+    for l, r in zip_longest(fl, fr):
+        output = None
+        if type(l) == int and type(r) == int: #checks int vs int and returns if definitive but not the same
+            if l < r:
+                return True
+            elif l > r:
                 return False
-        else:
-            print("else true")
+        elif type(l) == list and type(r) == list: #checks if list vs list and recurs
+            output = versus(l, r)
+        elif type(l) == list and type(r) == int: #checks if list vs single int and recurs as list vs list
+            output = versus(l, [r])
+        elif type(l) == int and type(r) == list: #checks if single int and list and recurs as list vs list
+            output = versus([l], r)
+        elif l == None: #checks if vals have run out on the left
             return True
-    return len(l) < len(r)
+        elif r == None: #checks if vals have run out on the right
+            return False
+        if output != None: #checks for output of any recursions that aren't None
+            return output
+
 
 if __name__ == '__main__':
     startTime = timeit.default_timer()
